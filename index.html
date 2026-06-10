@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Image Encryption System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            width: 90%;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2c80b4;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🔐 Biometric-Driven Hyperchaotic Cryptosystem with Genetic Algorithm Optimization for Medical Image Security</h2>
+
+<!-- 🔒 ENCRYPT -->
+<div class="box">
+    <h2>Encrypt</h2>
+    <form id="encryptForm" method="POST" action="/encrypt" enctype="multipart/form-data">
+        <input type="file" name="fingerprint" required><br>
+        <input type="file" name="image" required><br>
+        <input type="text" name="img_type" placeholder="Enter image name" required><br>
+        <button type="submit">Encrypt</button>
+    </form>
+    <p id="encryptStatus"></p>
+
+<!-- <img id="combined_hist" width="700"> -->
+</div>
+<div class="box">
+<h2>Decrypt</h2>
+<form id="decryptForm">
+    <input type="file" name="fingerprint" required><br><br>
+    <input type="hidden" id="img_name" name="img_name">
+    <button type="submit">Decrypt</button>
+</form>
+</div>
+
+<p id="decryptResult"></p>
+<script>
+// ================= ENCRYPT =================
+document.getElementById("encryptForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const res = await fetch("/encrypt", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+        document.getElementById("encryptStatus").innerText =
+            "Mongodb Encryption image stored";
+        // ✅ AUTO STORE FILENAME FOR DECRYPTION
+        document.getElementById("img_name").value =
+        data.file_name;
+            // 🔥 ADD THESE TWO LINES HERE
+        document.getElementById("combined_hist").src =
+        "/" + data.combined_histogram + "?t=" + new Date().getTime();
+    } else {
+        document.getElementById("encryptStatus").innerText =
+            "Encryption Failed";
+    }
+};
+
+// ================= DECRYPT =================
+document.getElementById("decryptForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const res = await fetch("/decrypt", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if(data.status === "success"){
+        document.getElementById("decryptResult").innerText =
+            "Decrypted: " + data.decrypted_path;
+    } else {
+        document.getElementById("decryptResult").innerText =
+            "Unauthorized";
+    }
+};
+</script>
+</form>
+</body>
+</html>
